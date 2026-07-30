@@ -66,8 +66,11 @@ ready unattended with an empty cache).
 **Update leg, deferred with reason:** this instance is installed by `--image`, where
 `cloudron update --image` is inert (verified in a sibling package's ADR: no image pull
 fires; reinstall is the deploy path). The genuine update path for consumers is the
-versions-url channel, which is exercised at publish time on a throwaway install and
-recorded here when it runs.
+versions-url channel. **Cold-install component proven at publish time (2026-07-30):**
+`cloudron install --versions-url <raw CloudronVersions.json>` on a throwaway location
+installed 0.1.0 and answered `/health` and `/` with 200, then was torn down. The
+update-to-a-new-entry component gets its proof at the first 0.1.x release, when two
+entries exist.
 
 The detailed tables below are from the first ladder run (digest `1924e833…`, before the
 persistentDirs move); the rerun evidence above supersedes their digest references, the
