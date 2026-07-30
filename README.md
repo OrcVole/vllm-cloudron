@@ -12,9 +12,9 @@ acceptance gates. Nothing below should be relied on until a tagged release exist
 
 - **CPU inference only.** Cloudron does not currently pass GPUs through to app containers, so
   this package runs vLLM's CPU backend (amd64, AVX2 minimum, AVX-512 recommended). Set
-  expectations from measurement, not hope: on a 2016 AVX2-only Xeon with six cores, the
-  0.6B default model streams roughly 0.6 tokens per second; modern AVX-512 hardware is
-  substantially faster. That is genuinely useful for integrations, background automation,
+  expectations from measurement, not hope: on older AVX2-only server hardware with a
+  modest core allocation, the 0.6B default model streams roughly 0.6 tokens per second;
+  modern AVX-512 hardware is substantially faster. That is genuinely useful for integrations, background automation,
   and private processing of sensitive text; it is not a snappy chat experience. If Cloudron
   gains GPU support, a CUDA variant of this package becomes possible and is tracked in
   `docs/decisions/0001-cpu-only.md`.

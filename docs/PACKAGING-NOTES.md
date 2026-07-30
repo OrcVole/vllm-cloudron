@@ -53,7 +53,7 @@ lessons, sorted by who can use them:
 ## 2026-07-30: Dockerfile, local build and smoke proof (Phase 2)
 
 The two-stage build landed and the runtime smoke suite passed locally (rootless podman on an
-AVX-512 workstation). Image 5.62 GB uncompressed. Build gate: torch `2.13.0+cpu`,
+AVX-512-capable build machine). Image 5.62 GB uncompressed. Build gate: torch `2.13.0+cpu`,
 `cuda.is_available()` False, `import vllm` clean on the base.
 
 **Validated (decisions that held up):**
@@ -92,7 +92,7 @@ AVX-512 workstation). Image 5.62 GB uncompressed. Build gate: torch `2.13.0+cpu`
   lists), so denylist patterns must be anchored domain forms, never bare nouns.
 
 **Update, same day: the AVX2 probe on real hardware settled the open question.** A capped
-probe (6 CPUs, 8 GiB) of this exact image on a 2016 Broadwell-class AVX2-only host: engine
+probe (6 CPUs, 8 GiB) of this exact image on an older AVX2-only (no AVX-512) host: engine
 initialised cleanly (no SIGILL, no illegal instruction), `/ready` flipped 200 after 545
 seconds of first-boot model download plus warmup, and a single streamed 48-token completion
 took 77.6 seconds, roughly 0.6 tokens per second. Three conclusions. First, the prebuilt
