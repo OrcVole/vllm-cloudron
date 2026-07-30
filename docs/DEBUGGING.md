@@ -11,13 +11,19 @@ persistentDir) changed start.sh and the manifest, so the image was rebuilt and t
 restarted at Gate 0 against the new digest, per the ladder rules. The earlier evidence is
 kept for the record; the tables are updated per gate as the rerun completes.
 
+Shipping digest: `sha256:254b0295f6c3842d1c6415fe77b26e86578acc7bbd7d82c19cc572b5e8e970d9`.
+
 | Gate | Status | Evidence |
 |---|---|---|
-| 0 install and first run | PASS 2026-07-30 | see table below |
-| 1 auth | PASS 2026-07-30 | see table below |
-| 2 functional flows | not run | |
+| 0 install and first run | PASS 2026-07-30 (digest 254b0295) | tables below; rerun: fresh install ready in ~300 s, key `9c3cc4d7bc4da270` stable across restart, existing-key branch logged, `/var/lib/vllm` mounted by the platform and chowned |
+| 1 auth | PASS 2026-07-30 (digest 254b0295) | rerun: `/health` `/ready` `/ping` `/metrics` `/` all 200 r=0; `/v1/models` 401 bare/wrong key, 200 keyed |
+| 2 functional flows | PASS 2026-07-30 (digest 254b0295) | streamed 48-token completion 63 s through the proxy (>60 s cut), 50 chunks + `[DONE]`; non-streamed `finish=length`, `completion_tokens=8`; `request_success_total` delta exactly 2 |
 | 3 update and restore | not run | |
 | 4 memory | not run | |
+
+The detailed tables below are from the first ladder run (digest `1924e833…`, before the
+persistentDirs move); the rerun evidence above supersedes their digest references, the
+recipes remain valid.
 
 ## Gate 0 evidence (2026-07-30)
 
