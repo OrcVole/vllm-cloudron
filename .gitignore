@@ -1,0 +1,15 @@
+# Local, box-specific or secret material. Never tracked.
+.anonymize-list
+phase-notes/
+.claude/
+.env
+.env.*
+*token*.txt
+*.secret
+WIRING-NOTES.md
+*foundation*.md
+
+# Build and scratch artefacts
+*.tar
+*.log
+.DS_Store

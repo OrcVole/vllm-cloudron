@@ -1,0 +1,16 @@
+vllm-cloudron: vLLM packaged for Cloudron
+Copyright 2026 OrcVole
+
+This package redistributes vLLM (https://github.com/vllm-project/vllm),
+Copyright the vLLM project contributors, licensed under the Apache License,
+Version 2.0. vLLM is shipped unmodified; this repository contains packaging
+only (Dockerfile, process supervision, platform integration).
+
+The vLLM logo is the project's official brand asset, taken from
+https://github.com/vllm-project/media-kit and used unmodified apart from
+proportional resizing, to identify the packaged software. Its use does not
+imply endorsement by the vLLM project. The media-kit repository declares no
+explicit licence; usage follows the kit's published usage guidelines.
+
+This is an unofficial community package. It is not affiliated with, endorsed
+by, or supported by the vLLM project or Cloudron.

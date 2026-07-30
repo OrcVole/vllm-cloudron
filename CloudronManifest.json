@@ -1,0 +1,47 @@
+{
+  "id": "io.github.orcvole.vllm",
+  "title": "vLLM",
+  "author": "OrcVole",
+  "tagline": "High-throughput OpenAI-compatible LLM inference server",
+  "description": "file://DESCRIPTION.md",
+  "changelog": "file://CHANGELOG.md",
+  "icon": "file://logo.png",
+  "version": "0.1.0",
+  "upstreamVersion": "0.26.0",
+  "healthCheckPath": "/health",
+  "httpPort": 8000,
+  "addons": {
+    "localstorage": {}
+  },
+  "memoryLimit": 8589934592,
+  "configurePath": "/",
+  "optionalSso": true,
+  "postInstallMessage": "file://POSTINSTALL.md",
+  "checklist": {
+    "apikey": {
+      "message": "Get your API key: open a Terminal for this app (the `>_` button) and run `cat /app/data/.secrets/keys.env`. Send it as `Authorization: Bearer <key>` to the /v1 endpoints."
+    },
+    "model": {
+      "message": "First boot downloads the default model before the API answers. Watch progress in the app logs. To serve a different model, set VLLM_MODEL in the app's Environment and restart."
+    },
+    "streaming": {
+      "message": "CPU inference is deliberate, not fast. Use streaming responses (stream: true); long non-streamed completions can hit the platform's 60 second proxy timeout."
+    }
+  },
+  "tags": [
+    "ai",
+    "llm",
+    "inference",
+    "openai"
+  ],
+  "mediaLinks": [
+    "https://raw.githubusercontent.com/OrcVole/vllm-cloudron/main/screenshots/overview.png"
+  ],
+  "website": "https://github.com/OrcVole/vllm-cloudron",
+  "documentationUrl": "https://github.com/OrcVole/vllm-cloudron",
+  "contactEmail": "Most+github@OrcadianVole.com",
+  "packagerName": "OrcVole",
+  "packagerUrl": "https://github.com/OrcVole/vllm-cloudron",
+  "manifestVersion": 2,
+  "minBoxVersion": "9.1.0"
+}

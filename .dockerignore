@@ -1,0 +1,11 @@
+# Nothing but the build inputs enters the image context. Everything else is
+# excluded by default and allowed back in explicitly.
+*
+
+!Dockerfile
+!start.sh
+!nginx/
+!landing/
+!logo.png
+!LICENSE
+!NOTICE
