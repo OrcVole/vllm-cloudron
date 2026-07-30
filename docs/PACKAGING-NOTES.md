@@ -45,12 +45,20 @@ AVX-512 workstation). Image 5.62 GB uncompressed. Build gate: torch `2.13.0+cpu`
   against data files that ship inside ML images (tokenizer vocabularies, inflection word
   lists), so denylist patterns must be anchored domain forms, never bare nouns.
 
+**Update, same day: the AVX2 probe on real hardware settled the open question.** A capped
+probe (6 CPUs, 8 GiB) of this exact image on a 2016 Broadwell-class AVX2-only host: engine
+initialised cleanly (no SIGILL, no illegal instruction), `/ready` flipped 200 after 545
+seconds of first-boot model download plus warmup, and a single streamed 48-token completion
+took 77.6 seconds, roughly 0.6 tokens per second. Three conclusions. First, the prebuilt
+`+cpu` wheel genuinely supports AVX2; ADR 0002's source-build fallback is not needed.
+Second, the immediate-health front end is not a precaution but a requirement: nine minutes
+of connection-refused during a real first boot would restart-loop any direct health check.
+Third, performance claims must say "a token or so per second on decade-old AVX2 hardware";
+"single-digit tokens per second" was already optimistic for this class. The README now
+carries the measured framing.
+
 **Still open:**
 
-- **AVX2-only hosts are unproven.** The local proof ran on AVX-512 hardware; whether the
-  prebuilt `+cpu` wheel runs, and how it performs, on an AVX2-only host is unverified until
-  the box gate. Mitigation ladder if it fails: source-build targeting AVX2, or venv copy from
-  the upstream CPU image (ADR 0002).
 - Carry-overs from recon: `persistentDirs` restore semantics (Gate 3), the exact readiness
   endpoint surface in the pinned version, upstream integrations-listing process.
 

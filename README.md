@@ -11,11 +11,13 @@ acceptance gates. Nothing below should be relied on until a tagged release exist
 ## What this is, and what it is not
 
 - **CPU inference only.** Cloudron does not currently pass GPUs through to app containers, so
-  this package runs vLLM's CPU backend (amd64, AVX2 minimum, AVX512 recommended). Expect
-  single-digit tokens per second on small models. That is genuinely useful for integrations,
-  background automation, and private processing of sensitive text; it is not a snappy chat
-  experience. If Cloudron gains GPU support, a CUDA variant of this package becomes possible
-  and is tracked in `docs/decisions/0001-cpu-only.md`.
+  this package runs vLLM's CPU backend (amd64, AVX2 minimum, AVX-512 recommended). Set
+  expectations from measurement, not hope: on a 2016 AVX2-only Xeon with six cores, the
+  0.6B default model streams roughly 0.6 tokens per second; modern AVX-512 hardware is
+  substantially faster. That is genuinely useful for integrations, background automation,
+  and private processing of sensitive text; it is not a snappy chat experience. If Cloudron
+  gains GPU support, a CUDA variant of this package becomes possible and is tracked in
+  `docs/decisions/0001-cpu-only.md`.
 - **One model per install.** vLLM serves a single base model per server process. Install the
   app more than once for more models, or put an AI gateway in front.
 - **An API, not a website.** The app's domain serves a small landing page and the OpenAI API.
