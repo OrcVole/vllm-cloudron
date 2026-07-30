@@ -81,9 +81,12 @@ completion on CPU does not.
   lives outside the backup set (a `persistentDirs` path at `/var/lib/vllm`); backups stay
   small regardless of model size, and after a restore or clone the first boot re-downloads
   the model. The API key and configuration are always backed up.
-- **Memory:** the shipped `memoryLimit` is sized for the default small model. Larger models
-  need a larger limit (weights plus KV cache plus runtime overhead); raise it in the app's
-  Resources section before switching models.
+- **Memory:** the shipped `memoryLimit` is 10 GiB, measured against the default model's
+  steady footprint of ~7.4 GiB (weights + a preallocated 4 GiB KV cache + runtime). Larger
+  models need a larger limit; raise it in the app's Resources section before switching. On
+  RAM-tight boxes the trade goes the other way: set `VLLM_CPU_KVCACHE_SPACE=2` in the
+  Environment and lower the app's memory allowance; roughly, budget weights + KV cache +
+  2.5 GiB of runtime overhead.
 - **CPU is a shared resource.** Concurrent heavy requests queue; retry storms from clients
   make everything slower. Configure clients with generous timeouts and no aggressive retries.
 

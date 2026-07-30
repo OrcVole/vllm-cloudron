@@ -32,8 +32,9 @@ and updates; the cost is that a restore or clone starts the path empty.
 ## Consequences
 
 - Backups stay small and fast regardless of model size.
-- A restored or cloned install needs network access to the model source and a slow first boot.
-  The README says so.
+- Verified in Gate 3: an in-place restore keeps the persistentDir intact, so ordinary
+  restores do not pay a re-download; a fresh install (and, per platform semantics, a clone
+  to a new location) starts empty and re-downloads unattended. The README says so.
 - Gate 3 must prove: key sha256 identical across update and restore; model cache absent after
   restore; app reaches ready state again unattended.
 - `minBoxVersion` 9.1.0 (the floor for `persistentDirs`, and for the community versions

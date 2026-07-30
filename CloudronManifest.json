@@ -16,7 +16,7 @@
   "persistentDirs": [
     "/var/lib/vllm"
   ],
-  "memoryLimit": 8589934592,
+  "memoryLimit": 10737418240,
   "configurePath": "/",
   "optionalSso": true,
   "postInstallMessage": "file://POSTINSTALL.md",
