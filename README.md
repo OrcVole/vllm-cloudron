@@ -90,6 +90,13 @@ completion on CPU does not.
 - **CPU is a shared resource.** Concurrent heavy requests queue; retry storms from clients
   make everything slower. Configure clients with generous timeouts and no aggressive retries.
 
+## Community threads
+
+- Cloudron forum announcement and support thread:
+  https://forum.cloudron.io/topic/15757/vllm-community-package-now-available
+- vLLM community announcement:
+  https://discuss.vllm.ai/t/vllm-1-click-deployment-on-cloudron/2850
+
 ## For the two teams this package sits between
 
 - `docs/FOR-CLOUDRON.md`: verified observations on how the platform could better
