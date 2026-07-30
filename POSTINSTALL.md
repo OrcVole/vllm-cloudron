@@ -14,5 +14,5 @@ Send it as `Authorization: Bearer <key>` with every `/v1` request.
 answers. Watch the app's Logs for progress. The landing page shows how to make your first
 request once the model is ready.
 
-**Change the model** by setting `VLLM_MODEL` in the app's Environment section and restarting.
+**Change the model** by setting `LLM_MODEL` in the app's Environment section and restarting.
 Larger models need a larger memory limit (Resources section) first.

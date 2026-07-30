@@ -36,16 +36,20 @@ cloudron install \
 ## Configuration
 
 Set in the app's **Environment** section (Cloudron dashboard), then restart. Defaults are
-chosen so a fresh install works unattended. The definitive list will be settled during
-packaging; current plan:
+chosen so a fresh install works unattended. Package settings use the `LLM_` prefix because
+vLLM reserves the `VLLM_*` namespace for its own variables; the `VLLM_CPU_*` entries below
+are genuine upstream variables passed through.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `VLLM_MODEL` | a small instruct model | Hugging Face model id to serve |
-| `VLLM_SERVED_MODEL_NAME` | the model id | Name reported by `/v1/models` |
-| `VLLM_MAX_MODEL_LEN` | model default | Context length cap (memory lever) |
-| `VLLM_CPU_KVCACHE_SPACE` | sized to the app's memory limit | KV cache budget in GiB |
-| `VLLM_HF_TOKEN` | unset | Hugging Face token for gated models |
+| `LLM_MODEL` | `Qwen/Qwen3-0.6B` | Hugging Face model id to serve |
+| `LLM_SERVED_MODEL_NAME` | the model id | Name reported by `/v1/models` |
+| `LLM_MAX_MODEL_LEN` | `8192` | Context length cap; raise together with the KV cache budget (a model's full declared context can exceed the KV budget and abort startup) |
+| `LLM_NUM_THREADS` | cgroup CPU allotment | Inference thread count |
+| `LLM_EXTRA_ARGS` | unset | Extra `vllm serve` arguments, space-separated |
+| `VLLM_CPU_KVCACHE_SPACE` | `4` | KV cache budget in GiB |
+| `VLLM_CPU_OMP_THREADS_BIND` | upstream `auto` | Thread binding; set `nobind` if boot logs complain |
+| `HF_TOKEN` | unset | Hugging Face token for gated models |
 
 The API key is generated once on first run and stored at `/app/data/.secrets/keys.env`. It is
 never regenerated automatically; integrations can rely on it surviving updates and restores.

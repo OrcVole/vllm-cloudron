@@ -22,7 +22,7 @@
       "message": "Get your API key: open a Terminal for this app (the `>_` button) and run `cat /app/data/.secrets/keys.env`. Send it as `Authorization: Bearer <key>` to the /v1 endpoints."
     },
     "model": {
-      "message": "First boot downloads the default model before the API answers. Watch progress in the app logs. To serve a different model, set VLLM_MODEL in the app's Environment and restart."
+      "message": "First boot downloads the default model before the API answers. Watch progress in the app logs. To serve a different model, set LLM_MODEL in the app's Environment and restart."
     },
     "streaming": {
       "message": "CPU inference is deliberate, not fast. Use streaming responses (stream: true); long non-streamed completions can hit the platform's 60 second proxy timeout."

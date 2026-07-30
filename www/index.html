@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>vLLM API server</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 3rem auto; padding: 0 1rem; line-height: 1.55; }
+  code, pre { font-family: ui-monospace, monospace; background: rgba(127,127,127,.15); border-radius: 4px; }
+  code { padding: .1em .3em; }
+  pre { padding: .8em 1em; overflow-x: auto; }
+  h1 { font-size: 1.5rem; } h2 { font-size: 1.1rem; margin-top: 2rem; }
+  .muted { opacity: .75; }
+  .ok { color: #2a7d2a; } .warm { color: #a06000; }
+</style>
+</head>
+<body>
+<h1>vLLM API server</h1>
+<p>This app is an <strong>OpenAI-compatible API</strong>, not a website. There is nothing to
+log in to here: point any OpenAI-style client at this domain with the API key.</p>
+
+<p id="status" class="muted">Checking model status&hellip;</p>
+
+<h2>Your API key</h2>
+<p>Generated on first run. In the Cloudron dashboard, open a Terminal for this app and run
+<code>cat /app/data/.secrets/keys.env</code>.</p>
+
+<h2>First request</h2>
+<pre id="example">curl https://THIS-DOMAIN/v1/chat/completions \
+  -H "Authorization: Bearer YOUR-KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "MODEL-NAME", "stream": true,
+       "messages": [{"role": "user", "content": "Hello"}]}'</pre>
+<p class="muted">Always use <code>"stream": true</code>: this is CPU inference and long
+non-streamed responses can hit the platform's 60 second proxy timeout. List the served model
+name with <code>GET /v1/models</code> (needs the key).</p>
+
+<h2>Endpooints</h2>
+<p><code>/v1/chat/completions</code>, <code>/v1/completions</code>, <code>/v1/models</code>
+(key required) &middot; <code>/health</code> liveness &middot; <code>/ready</code> readiness
+(200 once the model is loaded) &middot; <code>/metrics</code> Prometheus.</p>
+
+<script>
+  document.getElementById('example').textContent =
+    document.getElementById('example').textContent.replace('THIS-DOMAIN', location.host);
+  fetch('/ready').then(function (r) {
+    var el = document.getElementById('status');
+    if (r.ok) { el.textContent = 'Model loaded: the API is ready.'; el.className = 'ok'; }
+    else { el.textContent = 'Model is still downloading or warming up; the /v1 API answers once /ready returns 200. Check the app logs for progress.'; el.className = 'warm'; }
+  }).catch(function () {});
+</script>
+</body>
+</html>

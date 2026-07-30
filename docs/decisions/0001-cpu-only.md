@@ -10,10 +10,17 @@ wheels as the default. Two independent facts rule that out here:
 1. **The platform cannot pass a GPU into an app container.** As of 2026-07-30 the Cloudron
    manifest offers no GPU or device passthrough; the only hardware capability is `vaapi`
    (video transcode via `/dev/dri`). The official Ollama package is CPU-only for the same
-   reason, and staff describe GPU support as possible future work with no committed plan.
-   A community proposal to adopt Docker's native Container Device Interface exists on the
-   forum but is unanswered. So even a GPU-equipped host could not offer the device to this
-   app through supported platform means.
+   reason. The roadmap position, checked on 2026-07-30: no committed GPU item exists. The
+   staff-authored "What's coming in Cloudron 10" thread (April to July 2026) contains no
+   GPU, NVIDIA, CDI or device-passthrough entry; the strongest staff statement remains
+   November 2025 ("second step is to enable GPU/VAAPI support in docker; this requires
+   some complex automation"), with no follow-up since. The most recent movement is a
+   community analysis (July 2026) noting that Docker now ships Container Device Interface
+   support natively (Docker 25+, default-on in 28.x, and Cloudron 9 runs Docker 28.1.1),
+   so the historical "patched Docker" objection no longer applies; that proposal is
+   unanswered by staff. So even a GPU-equipped host could not offer the device to this
+   app through supported platform means today, but the technical gap has narrowed to a
+   platform decision rather than an ecosystem blocker.
 2. Typical Cloudron hosts, including the reference deployment, have no GPU.
 
 vLLM's CPU backend is officially supported on amd64 (AVX512 fast path, AVX2 reduced) with

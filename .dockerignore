@@ -4,8 +4,7 @@
 
 !Dockerfile
 !start.sh
-!nginx/
-!landing/
-!logo.png
+!nginx.conf
+!www/
 !LICENSE
 !NOTICE

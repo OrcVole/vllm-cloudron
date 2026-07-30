@@ -124,6 +124,23 @@ else
   emit token "$(img F "$FIXED" $CRIT_DIRS)"
   shp="$(img E "$SHAPE" $CRIT_DIRS)"
 
+  # --- known false positives in upstream library SOURCE, allowed by exact path with a ---
+  # --- visible line so a real leak in a new path can never hide behind them ----------
+  # PIL/ImageFont.py embeds its default font as base64, which randomly matches token
+  # shapes; cryptography's ssh.py contains the literal "BEGIN OPENSSH PRIVATE KEY" as a
+  # parser constant. Both are code shipped by upstream, not credentials. Re-check these
+  # paths when the vLLM version bumps.
+  KNOWN_FP=(
+    /app/code/venv/lib/python3.12/site-packages/PIL/ImageFont.py
+    /app/code/venv/lib/python3.12/site-packages/cryptography/hazmat/primitives/serialization/ssh.py
+  )
+  for fp in "${KNOWN_FP[@]}"; do
+    if printf '%s\n' "$shp" | grep -qF "$fp:"; then
+      echo "  (allowed-fp: $fp is upstream library source, not a credential)"
+      shp="$(printf '%s\n' "$shp" | grep -vF "$fp:" || true)"
+    fi
+  done
+
   # --- the inert /etc/ssh host keys: whitelist BY EXACT PATH, with a VISIBLE COUNT ---
   # cloudron/base ships three inert SSH host keys. No sshd runs in the app and the Dockerfile never
   # touches ssh, so they are noise, not a leak. Allow ONLY these exact paths, pinned by sha256, and

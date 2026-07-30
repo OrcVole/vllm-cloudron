@@ -98,16 +98,20 @@ the value itself, in any file, ever. The digest is the invariant.
 Translate on every boot. To be verified against `vllm serve --help` for the pinned version
 during Phase 2; the table below is the plan.
 
+Package-defined operator settings use the `LLM_` prefix: vLLM owns the `VLLM_*` namespace
+and warns about unknown members on every boot (verified 2026-07-30, v0.26.0).
+
 | Application variable | Source or value | Notes |
 |---|---|---|
 | `VLLM_API_KEY` | generated key from `/app/data/.secrets/keys.env` | env, never argv |
 | `HF_HOME` | persistent model cache path | weights and hub state |
-| `VLLM_CACHE_ROOT` | persistent cache path | vLLM's own compiled-artifact cache |
-| `VLLM_MODEL` (package) | operator env or small default | passed as the positional model argument |
-| `VLLM_CPU_KVCACHE_SPACE` | operator env or derived from cgroup memory | GiB budget |
-| `VLLM_CPU_OMP_THREADS_BIND` | `auto` unless operator overrides | thread pinning |
-| `HF_TOKEN` | operator-set `VLLM_HF_TOKEN` if present | gated models |
-| `HF_HUB_DISABLE_TELEMETRY`, `DO_NOT_TRACK`, usage-stats opt-outs | forced on every boot | verify exact vLLM knobs in Phase 2 |
+| `VLLM_CACHE_ROOT` | persistent cache path | compiled-artifact cache (verified: torch AOT cache lands here) |
+| `LLM_MODEL` (package) | operator env or `Qwen/Qwen3-0.6B` | positional model argument |
+| `LLM_MAX_MODEL_LEN` (package) | operator env or `8192` | a model's full declared context can exceed the KV budget and abort engine start (verified: Qwen3-0.6B declares 40960, needs 4.38 GiB KV against the 4 GiB default) |
+| `VLLM_CPU_KVCACHE_SPACE` | operator env or `4` | GiB budget, upstream variable |
+| `VLLM_CPU_OMP_THREADS_BIND` | upstream default `auto` | passed through when set; `auto` verified working rootless without SYS_NICE (NUMA migrate warning is non-fatal) |
+| `HF_TOKEN` | operator-set, flows through unchanged | gated models |
+| `HF_HUB_DISABLE_TELEMETRY`, `DO_NOT_TRACK`, `VLLM_NO_USAGE_STATS`, `VLLM_DO_NOT_TRACK` | forced on every boot | |
 
 ## Backup and restore
 

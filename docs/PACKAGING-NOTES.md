@@ -4,6 +4,58 @@ Anonymised. Box-specific detail lives in the maintainer's local notes, not here.
 
 ---
 
+## 2026-07-30: Dockerfile, local build and smoke proof (Phase 2)
+
+The two-stage build landed and the runtime smoke suite passed locally (rootless podman on an
+AVX-512 workstation). Image 5.62 GB uncompressed. Build gate: torch `2.13.0+cpu`,
+`cuda.is_available()` False, `import vllm` clean on the base.
+
+**Validated (decisions that held up):**
+
+- **The immediate-health arrangement (ADR 0003).** `/health` answered 200 within 15 seconds
+  of container start while the engine was still initialising; `/ready` flipped to 200 at
+  roughly 60 seconds with a warm model cache; a single streamed chat completion produced 34
+  SSE chunks and terminated with `[DONE]`; `/v1/models` returned 401 bare and 200 keyed.
+- **Cache redirection (ADR 0004).** vLLM's torch AOT compile cache demonstrably landed under
+  `VLLM_CACHE_ROOT` on the persistent path, and the Hugging Face download went to `HF_HOME`.
+- **Thread binding.** Upstream's `auto` binding worked in an unprivileged rootless container
+  without `SYS_NICE`; the `numa_migrate_pages` warning it prints is non-fatal.
+
+**Surfaced (things that were wrong or missing, and are now fixed):**
+
+- **uv cannot install the release CPU wheel.** The wheel's exact `setuptools` pin is
+  unsatisfiable for uv's first-index strategy against the PyTorch CPU extra index; plain pip
+  resolves it. The Dockerfile uses pip for that one step and says why.
+- **`VLLM_*` is a reserved environment namespace.** vLLM warns about every unknown
+  `VLLM_`-prefixed variable at boot, so all package-defined settings moved to an `LLM_`
+  prefix; only genuine upstream variables keep the `VLLM_` names.
+- **A model's declared context can abort engine start.** The 0.6B default model declares a
+  40960-token context, which alone needs 4.38 GiB of KV cache against the 4 GiB CPU default,
+  and the engine refuses to start (exact upstream ValueError recorded in the maintainer
+  notes). The package now defaults `--max-model-len` to 8192 and documents raising it
+  together with `VLLM_CPU_KVCACHE_SPACE`.
+- **The smoke script destroyed its own evidence.** On failure it removed the crashed
+  container before the logs were readable; it now keeps the container and detects container
+  death during the readiness wait instead of polling a corpse to timeout.
+- **A multi-gigabyte ML image redefines secret-scanner noise.** Upstream library source
+  matches credential shapes (an embedded base64 font in PIL, the literal private-key header
+  constant in the cryptography package's SSH parser), so the scanner gained a by-exact-path
+  allowlist that prints every use, in the same visible style as the pinned base-image host
+  keys. Separately, bare dictionary words in the maintainer's local denylist false-positive
+  against data files that ship inside ML images (tokenizer vocabularies, inflection word
+  lists), so denylist patterns must be anchored domain forms, never bare nouns.
+
+**Still open:**
+
+- **AVX2-only hosts are unproven.** The local proof ran on AVX-512 hardware; whether the
+  prebuilt `+cpu` wheel runs, and how it performs, on an AVX2-only host is unverified until
+  the box gate. Mitigation ladder if it fails: source-build targeting AVX2, or venv copy from
+  the upstream CPU image (ADR 0002).
+- Carry-overs from recon: `persistentDirs` restore semantics (Gate 3), the exact readiness
+  endpoint surface in the pinned version, upstream integrations-listing process.
+
+---
+
 ## 2026-07-30: recon and scaffold
 
 Recon established viability (see RECON.md in the maintainer's working folder; the public
