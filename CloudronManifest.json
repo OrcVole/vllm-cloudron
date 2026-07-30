@@ -13,6 +13,9 @@
   "addons": {
     "localstorage": {}
   },
+  "persistentDirs": [
+    "/var/lib/vllm"
+  ],
   "memoryLimit": 8589934592,
   "configurePath": "/",
   "optionalSso": true,

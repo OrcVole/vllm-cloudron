@@ -78,8 +78,9 @@ completion on CPU does not.
   immediately (a lightweight front end answers the platform health check) while vLLM loads
   behind it; watch the app logs for download and warmup progress.
 - **Model cache and backups:** model weights are reproducible from the network, so the cache
-  is planned to live outside the backup set (`persistentDirs`); after a restore or clone the
-  first boot re-downloads the model. The API key and configuration are always backed up.
+  lives outside the backup set (a `persistentDirs` path at `/var/lib/vllm`); backups stay
+  small regardless of model size, and after a restore or clone the first boot re-downloads
+  the model. The API key and configuration are always backed up.
 - **Memory:** the shipped `memoryLimit` is sized for the default small model. Larger models
   need a larger limit (weights plus KV cache plus runtime overhead); raise it in the app's
   Resources section before switching models.

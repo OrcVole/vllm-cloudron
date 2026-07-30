@@ -15,9 +15,12 @@ VENV="${CODE}/venv"
 
 SECRETS_DIR="${DATA}/.secrets"
 KEYS_ENV="${SECRETS_DIR}/keys.env"
-MODELS_DIR="${DATA}/models"        # persistentDirs path: reproducible caches, not backed up
+# Reproducible caches live on the persistentDirs path (ADR 0004): outside /app/data, so the
+# filesystem backup never carries multi-GB weights; survives updates; empty after a restore
+# or clone, at which point first boot re-downloads the model.
+MODELS_DIR="/var/lib/vllm"
 HF_DIR="${MODELS_DIR}/hf"          # HF_HOME: hub cache, token state, downloaded weights
-VLLM_CACHE="${MODELS_DIR}/vllm"    # VLLM_CACHE_ROOT: compiled-artifact cache
+VLLM_CACHE="${MODELS_DIR}/cache"   # VLLM_CACHE_ROOT: compiled-artifact cache
 CACHE_DIR="${DATA}/cache"          # XDG cache (small, backed up)
 
 # nginx owns the manifest httpPort and answers /health immediately; vLLM binds its own port
@@ -37,11 +40,20 @@ MAX_LEN="${LLM_MAX_MODEL_LEN:-8192}"
 
 echo "==> [start] vllm ${UPSTREAM_VERSION:-unknown} (cpu) booting"
 
-# 1. Ownership and layout on EVERY boot: a restore drifts ownership and modes.
-echo "==> [start] preparing ${DATA} (secrets, model cache, xdg cache)"
+# 1. Ownership and layout on EVERY boot: a restore drifts ownership and modes, and the
+#    persistentDirs mount arrives root-owned.
+echo "==> [start] preparing ${DATA} and ${MODELS_DIR} (secrets, model cache, xdg cache)"
 mkdir -p "${SECRETS_DIR}" "${HF_DIR}" "${VLLM_CACHE}" "${CACHE_DIR}"
-chown -R cloudron:cloudron "${DATA}"
+chown -R cloudron:cloudron "${DATA}" "${MODELS_DIR}"
 chmod 0700 "${SECRETS_DIR}"
+
+# Defensive cleanup: a pre-release layout kept the cache at /app/data/models. It is
+# reproducible data, so reclaim the backup weight if found. No released version ever
+# used that path.
+if [[ -d "${DATA}/models" ]]; then
+  echo "==> [start] removing stale pre-release cache at ${DATA}/models (reproducible; now at ${MODELS_DIR})"
+  rm -rf "${DATA}/models"
+fi
 
 # nginx scratch under /run (tmpfs; the root filesystem is read-only at runtime).
 NGINX_RUN=/run/nginx

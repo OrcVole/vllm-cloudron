@@ -17,8 +17,10 @@ prober requires.
 - A single API key, generated on first run (`openssl rand -hex 32`), stored at
   `/app/data/.secrets/keys.env` mode 0600, exported to vLLM as an environment variable (never
   argv, which would leak into the process table). Existing keys are never overwritten.
-- Open surfaces: `/health`, `/ping`, the landing page at `/`. Everything under `/v1` requires
-  `Authorization: Bearer <key>`.
+- Open surfaces: `/health`, `/ping`, `/ready`, the landing page at `/`, and `/metrics`
+  (upstream guards only `/v1*`; metrics carry usage counters and the model name, no
+  secrets, and staying open keeps Prometheus scraping simple; verified in Gate 1).
+  Everything under `/v1` requires `Authorization: Bearer <key>`.
 
 ## Consequences
 

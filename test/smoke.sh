@@ -24,10 +24,11 @@ fail() { echo "SMOKE FAIL: $*"; $CRI logs --tail 60 "$NAME" 2>&1 | tail -60 || t
 
 $CRI rm -f "$NAME" >/dev/null 2>&1 || true
 $CRI volume create "$VOL" >/dev/null 2>&1 || true
+$CRI volume create "${VOL}-models" >/dev/null 2>&1 || true
 
 echo "==> starting $IMAGE as $NAME on :$PORT"
 $CRI run -d --name "$NAME" -p "127.0.0.1:${PORT}:8000" -v "$VOL":/app/data \
-  --memory 8g "$IMAGE" >/dev/null
+  -v "${VOL}-models":/var/lib/vllm --memory 8g "$IMAGE" >/dev/null
 
 # 1. Liveness must answer 200 well before the model is ready (ADR 0003). Give nginx 15s to
 #    come up, then require /health while /ready is still failing or just-ready.

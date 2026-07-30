@@ -1,6 +1,15 @@
 # ADR 0004: model cache on persistentDirs, key and config in /app/data
 
-Status: proposed, 2026-07-30. To be proven in Gate 3 before it becomes accepted.
+Status: implemented 2026-07-30, acceptance pending Gate 3 restore evidence.
+
+Implementation notes (from a sibling package's hard-won precedent): the persistentDirs
+path lives OUTSIDE /app/data (`/var/lib/vllm`), matching the proven pattern; the mount
+arrives root-owned so start.sh chowns it every boot; no `backupCommand`/`restoreCommand`
+are declared because the cache is fully reproducible and the correct restore behaviour is
+a re-download, not a dump (the manifest reference suggests pairing with backupCommand;
+deliberately not done here, verified in Gate 3). Introduced before first publish because
+adding a persistentDir to an already-published package orphans existing users' data
+without a one-time in-place migration.
 
 ## Context
 
@@ -14,8 +23,8 @@ and updates; the cost is that a restore or clone starts the path empty.
 
 ## Decision
 
-- `/app/data/models` (exact path settled in Phase 3) declared under `persistentDirs`: holds
-  `HF_HOME`, the weight cache, and `VLLM_CACHE_ROOT` (vLLM's compiled-artifact cache).
+- `/var/lib/vllm` declared under `persistentDirs`: holds `HF_HOME` (weights and hub state)
+  and `VLLM_CACHE_ROOT` (vLLM's compiled-artifact cache).
 - The key (`/app/data/.secrets/keys.env`) and configuration stay on the normal backed-up path.
 - First boot, and first boot after a restore or clone, downloads the model; the health
   arrangement (ADR 0003) makes that survivable and visible.
