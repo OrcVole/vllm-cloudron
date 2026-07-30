@@ -90,6 +90,15 @@ completion on CPU does not.
 - **CPU is a shared resource.** Concurrent heavy requests queue; retry storms from clients
   make everything slower. Configure clients with generous timeouts and no aggressive retries.
 
+## For the two teams this package sits between
+
+- `docs/FOR-CLOUDRON.md`: verified observations on how the platform could better
+  support AI packages (GPU via CDI, cache-exclusion backups, the proxy timeout, CLI
+  findings).
+- `docs/FOR-UPSTREAM.md`: what would make vLLM easier to package (liveness before
+  model load, context-versus-cache documentation, the reserved env namespace, sizing
+  guidance).
+
 ## Licence
 
 vLLM is Apache-2.0, shipped unmodified; this packaging is Apache-2.0 as well. See `LICENSE`
