@@ -4,6 +4,52 @@ Anonymised. Box-specific detail lives in the maintainer's local notes, not here.
 
 ---
 
+## 2026-07-30: release harvest, three audiences
+
+The 0.1.0 release closed with the full gate ladder passed, the versions channel live and
+cold-install proven, and production wired to a chat frontend and an AI gateway. The
+lessons, sorted by who can use them:
+
+**For future packagers (ours and anyone else's):**
+
+- The immediate-health front end is mandatory for any server that binds after model
+  load; nine minutes of first-boot connection-refused is normal here, not an edge case.
+- Reserve upstream's env namespace to upstream (`LLM_` prefix for package settings).
+- Cap context length explicitly on CPU; model-declared defaults can exceed the KV
+  budget and abort startup.
+- Anchor secret-scanner denylists to domain forms; bare dictionary words collide with
+  tokenizer vocabularies inside ML images, and upstream library source legitimately
+  contains credential-shaped strings that need a visible by-path allowlist.
+- An AI gateway's `ai` backend forwards the original request path (a prefix rewrite is
+  needed for a path-namespaced route) and does not serve bodyless GETs like
+  `/v1/models`.
+
+**For the Cloudron team (also in the announcement):**
+
+- CDI-based GPU passthrough is now a platform decision, not an ecosystem blocker;
+  Docker 28.x ships it by default and the manifest's capability model already fits.
+- A backup-exclusion primitive for reproducible multi-GB caches would serve every AI
+  package; `persistentDirs` works (and, verified here, survives in-place restores
+  intact) but is all-or-nothing per path and pairs awkwardly with "no backupCommand
+  because re-download is the correct restore".
+- The 60-second proxy timeout versus non-streamed LLM responses deserves a
+  packaging-docs note; streaming is the fix and packages should say so loudly.
+- `cloudron versions add` seeds `iconUrl` as an empty string into the manifest and then
+  fails its own validation on it; pre-setting the raw URL avoids the loop.
+
+**For vLLM upstream (also in the showcase draft, offered gratefully):**
+
+- A liveness/readiness split with an early-binding liveness endpoint would remove the
+  front-end shim for every orchestrated deployment.
+- A CPU-docs note that `--max-model-len` is effectively mandatory on small-RAM hosts.
+- A documented statement that `VLLM_*` is a reserved namespace.
+- A note for uv users that the release wheel's setuptools pin needs pip (or a laxer
+  index strategy) against the PyTorch CPU index.
+- Official CPU sizing guidance: tokens-per-second expectations by instruction tier and
+  a RAM rule of thumb (weights + KV cache + ~2.5 GB runtime overhead measured here).
+
+---
+
 ## 2026-07-30: Dockerfile, local build and smoke proof (Phase 2)
 
 The two-stage build landed and the runtime smoke suite passed locally (rootless podman on an
