@@ -1,3 +1,5 @@
+<upstream>0.26.0</upstream>
+
 vLLM is a high-throughput inference server for large language models with the most widely
 supported OpenAI-compatible API of the self-hosted options. This package runs it as a
 Cloudron app: one install serves one model at `https://<location>/v1`, protected by a
