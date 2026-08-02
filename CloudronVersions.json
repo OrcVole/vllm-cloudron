@@ -55,7 +55,7 @@
                 "dockerImage": "ghcr.io/orcvole/vllm-cloudron@sha256:254b0295f6c3842d1c6415fe77b26e86578acc7bbd7d82c19cc572b5e8e970d9"
             },
             "creationDate": "Thu, 30 Jul 2026 17:14:48 GMT",
-            "ts": "Thu, 30 Jul 2026 17:14:48 GMT",
+            "ts": 1785431688000,
             "publishState": "published"
         }
     }
