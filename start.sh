@@ -146,6 +146,34 @@ ARGS=( serve "${MODEL}" --host 127.0.0.1 --port "${VLLM_PORT}" \
 echo "==> [start] model    : ${MODEL} served as '${SERVED_NAME}', max context ${MAX_LEN}"
 echo "==> [start] http     : nginx 0.0.0.0:${PUBLIC_PORT} -> vllm 127.0.0.1:${VLLM_PORT} (/health open from t=0; /ready 200 once the model is loaded)"
 echo "==> [start] cache    : hf=${HF_DIR} vllm=${VLLM_CACHE} (persistent, excluded from backup; first boot downloads the model)"
+# vLLM 0.27.x runs its engine core in a SEPARATE PROCESS by default and brokers work over a
+# shared-memory ring buffer, which needs ~160 MiB of /dev/shm. Cloudron gives an app container a
+# fixed 64 MiB and exposes no manifest option to raise it, so 0.27.1 dies at startup with:
+#
+#   RuntimeError: Insufficient space in /dev/shm: 160 MiB required, 62 MiB free.
+#
+# 0.26.0 did not need it, so this arrived with the upstream bump and would have taken the app down
+# on update rather than at install -- caught by test/smoke.sh on 2026-08-19 before publishing.
+#
+# Running the engine IN-PROCESS avoids the ring buffer entirely. For a single-model, single-replica
+# CPU server that costs nothing: multiprocessing exists to fan out across replicas and devices, and
+# there is exactly one of each here. Measured the same day: /ready 200 in ~130 s against a 64 MiB
+# /dev/shm, model listed and a real chat completion served.
+#
+# DETECTED rather than hard-coded, so that if Cloudron ever raises the limit this package goes back
+# to the upstream default without anyone remembering to change it. The reason is always logged,
+# because a silently-degraded execution mode is the kind of thing that confuses the next round.
+SHM_FREE_MIB=$(df -Pm /dev/shm 2>/dev/null | awk 'NR==2{print $4}')
+SHM_NEEDED_MIB=200
+if [ -z "${VLLM_ENABLE_V1_MULTIPROCESSING:-}" ] \
+   && [ -n "${SHM_FREE_MIB}" ] && [ "${SHM_FREE_MIB}" -lt "${SHM_NEEDED_MIB}" ]; then
+  export VLLM_ENABLE_V1_MULTIPROCESSING=0
+  echo "==> [start] shm      : ${SHM_FREE_MIB} MiB free in /dev/shm, under the ${SHM_NEEDED_MIB} MiB the multiproc engine needs"
+  echo "==> [start] shm      : running the engine IN-PROCESS (VLLM_ENABLE_V1_MULTIPROCESSING=0); no functional loss on a single-model CPU server"
+else
+  echo "==> [start] shm      : ${SHM_FREE_MIB:-unknown} MiB free in /dev/shm, multiproc engine left at its default"
+fi
+
 echo "==> [start] threads  : ${THREADS} (omp/mkl), kv cache ${VLLM_CPU_KVCACHE_SPACE} GiB"
 echo "==> [start] api key  : $( [[ -s "${KEYS_ENV}" ]] && echo 'present' || echo 'MISSING' )"
 

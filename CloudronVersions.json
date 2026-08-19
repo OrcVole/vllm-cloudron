@@ -57,6 +57,63 @@
             "creationDate": "Thu, 30 Jul 2026 17:14:48 GMT",
             "ts": 1785431688000,
             "publishState": "published"
+        },
+        "0.2.0": {
+            "manifest": {
+                "id": "io.github.orcvole.vllm",
+                "title": "vLLM",
+                "author": "OrcVole",
+                "tagline": "High-throughput OpenAI-compatible LLM inference server",
+                "description": "<upstream>0.27.1</upstream>\n\nvLLM is a high-throughput inference server for large language models with the most widely\nsupported OpenAI-compatible API of the self-hosted options. This package runs it as a\nCloudron app: one install serves one model at `https://<location>/v1`, protected by a\ngenerated API key, with weights cached locally and every OpenAI-style client able to connect\nunchanged.\n\nThis is CPU inference (amd64). It will not match GPU speed and it is not meant to: it gives\nintegrations, automations and privacy-sensitive workloads a fully self-hosted OpenAI endpoint\non the server you already run. Pair it with a chat frontend, an AI gateway, embeddings and a\nvector store to complete a private AI stack on Cloudron.\n\nUnofficial community package. Not affiliated with the vLLM project or Cloudron.\n",
+                "changelog": "* vLLM 0.27.1 (from 0.26.0), which upstream calls a breaking environment change: PyTorch moves to 2.13.0 with torchvision 0.28.0 and Triton 3.7.1\n* Upstream removed the `max_num_partial_prefills` and `max_long_partial_prefills` arguments and dropped the Plamo2 and Ouro models; this package used none of them, so no packaging change was needed\n* New models available upstream include Qwen3.5 dense and MoE, K-EXAONE-2.0, VaultGemma and jina-embeddings-v5-text-nano\n* Packaging fix required by 0.27.x: its engine now runs in a separate process and brokers work over a shared-memory ring buffer needing 160 MiB of /dev/shm, while a Cloudron app container has a fixed 64 MiB. The app would not have started at all. start.sh now measures /dev/shm at boot and runs the engine in-process when it is under 200 MiB, which costs nothing on a single-model CPU server, and logs which mode it chose. Written as a measurement rather than a constant, so the package returns to upstream's default automatically if the platform limit ever rises\n",
+                "icon": "file://logo.png",
+                "version": "0.2.0",
+                "upstreamVersion": "0.27.1",
+                "healthCheckPath": "/health",
+                "httpPort": 8000,
+                "addons": {
+                    "localstorage": {}
+                },
+                "persistentDirs": [
+                    "/var/lib/vllm"
+                ],
+                "memoryLimit": 10737418240,
+                "configurePath": "/",
+                "optionalSso": true,
+                "postInstallMessage": "This app is an **API server**. The domain serves a small landing page and the OpenAI-compatible\nAPI at `/v1`; there is no web interface to log in to.\n\n**Your API key** was generated on first run. Open a Terminal for this app (the `>_` button) and\nrun:\n\n```\ncat /app/data/.secrets/keys.env\n```\n\nSend it as `Authorization: Bearer <key>` with every `/v1` request.\n\n**First boot is slow on purpose:** the default model downloads and loads before the API\nanswers. Watch the app's Logs for progress. The landing page shows how to make your first\nrequest once the model is ready.\n\n**Change the model** by setting `LLM_MODEL` in the app's Environment section and restarting.\nLarger models need a larger memory limit (Resources section) first.\n",
+                "checklist": {
+                    "apikey": {
+                        "message": "Get your API key: open a Terminal for this app (the `>_` button) and run `cat /app/data/.secrets/keys.env`. Send it as `Authorization: Bearer <key>` to the /v1 endpoints."
+                    },
+                    "model": {
+                        "message": "First boot downloads the default model before the API answers. Watch progress in the app logs. To serve a different model, set LLM_MODEL in the app's Environment and restart."
+                    },
+                    "streaming": {
+                        "message": "CPU inference is deliberate, not fast. Use streaming responses (stream: true); long non-streamed completions can hit the platform's 60 second proxy timeout."
+                    }
+                },
+                "tags": [
+                    "ai",
+                    "llm",
+                    "inference",
+                    "openai"
+                ],
+                "mediaLinks": [
+                    "https://raw.githubusercontent.com/OrcVole/vllm-cloudron/main/screenshots/overview.png"
+                ],
+                "website": "https://github.com/OrcVole/vllm-cloudron",
+                "documentationUrl": "https://github.com/OrcVole/vllm-cloudron",
+                "contactEmail": "Most+github@OrcadianVole.com",
+                "packagerName": "OrcVole",
+                "packagerUrl": "https://github.com/OrcVole/vllm-cloudron",
+                "manifestVersion": 2,
+                "minBoxVersion": "9.1.0",
+                "iconUrl": "https://raw.githubusercontent.com/OrcVole/vllm-cloudron/main/logo.png",
+                "dockerImage": "ghcr.io/orcvole/vllm-cloudron@sha256:0601613416b50b5cd832a7ff7153228745e9d2c0076c68ae293fe90c1284192e"
+            },
+            "creationDate": "Wed, 19 Aug 2026 18:17:05 GMT",
+            "ts": 1787163425000,
+            "publishState": "published"
         }
     }
 }

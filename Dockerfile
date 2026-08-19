@@ -7,7 +7,7 @@
 # the multi-gigabyte CUDA torch (field guide gotcha #2). A future GPU variant swaps the +cpu
 # wheel for the +cu129 wheel published in the same upstream release (ADR 0001).
 
-ARG VLLM_VERSION=0.26.0
+ARG VLLM_VERSION=0.27.1
 
 # --- Stage 1: builder ----------------------------------------------------------------------
 FROM cloudron/base:5.0.0@sha256:04fd70dbd8ad6149c19de39e35718e024417c3e01dc9c6637eaf4a41ec4e596c AS builder
