@@ -49,5 +49,5 @@ overhead was our measurement), would let people size before installing.
 
 ## Packaging contact
 
-Package source: https://github.com/OrcVole/vllm-cloudron. Issues and corrections are
+Package source: <https://github.com/OrcVole/vllm-cloudron>. Issues and corrections are
 welcome; the package ships vLLM unmodified and is unaffiliated with the project.

@@ -93,9 +93,9 @@ completion on CPU does not.
 ## Community threads
 
 - Cloudron forum announcement and support thread:
-  https://forum.cloudron.io/topic/15757/vllm-community-package-now-available
+  <https://forum.cloudron.io/topic/15757/vllm-community-package-now-available>
 - vLLM community announcement:
-  https://discuss.vllm.ai/t/vllm-1-click-deployment-on-cloudron/2850
+  <https://discuss.vllm.ai/t/vllm-1-click-deployment-on-cloudron/2850>
 
 ## For the two teams this package sits between
 
