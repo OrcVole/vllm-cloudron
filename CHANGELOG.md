@@ -1,3 +1,11 @@
+[0.2.1]
+
+- Update vLLM 0.27.1 -> 0.28.0
+- Security: fixes prevent denial of service via forged audio sample rates and oversized image inputs, unauthenticated access to API endpoints, arbitrary code execution from untrusted model repositories, and resource exhaustion from unbounded generation requests
+- Breaking: bitsandbytes quantization moved to an out-of-tree plugin; Transformers dependency bumped to 5.15.0; removed flags `calculate_kv_scales` and `override_attention_dtype`; `reasoning_content` no longer included in output; MoE legacy code paths removed; `cache_salt` now required to be non-empty
+- Behaviour changes: `max_num_batched_tokens` default raised to 16384; prefix caching now enabled by default for Mamba models; Blackwell CUDA graph capture default raised to 1024; KV offload tiering metrics renamed from block to chunk
+- Packaging: pin moved; /dev/shm detection in start.sh unchanged and still required
+
 [0.2.0]
 
 - vLLM 0.27.1 (from 0.26.0), which upstream calls a breaking environment change: PyTorch moves to 2.13.0 with torchvision 0.28.0 and Triton 3.7.1

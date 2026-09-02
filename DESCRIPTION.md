@@ -1,4 +1,4 @@
-`<upstream>`0.27.1</upstream>
+`<upstream>0.28.0</upstream>
 
 vLLM is a high-throughput inference server for large language models with the most widely
 supported OpenAI-compatible API of the self-hosted options. This package runs it as a
