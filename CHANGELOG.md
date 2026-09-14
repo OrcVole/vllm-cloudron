@@ -8,7 +8,9 @@
 - PyAV video decoder backend removed; use OpenCV or Torchcodec instead
 - Environment variables `VLLM_TEST_FORCE_FP8_MARLIN` and `VLLM_ROCM_USE_AITER_FP4_ASM_GEMM` removed
 - FlashInfer all-reduce now enabled by default for TP CUDA groups (opt out with `VLLM_ALLREDUCE_USE_FLASHINFER=0`)
-- Packaging: no changes required; existing deployments will see no required action on update
+- Check before updating: vLLM 0.29 removes the ten model architectures listed above and makes Model Runner V2 the
+  default engine. If your install serves one of those models, or passes a removed option or environment variable
+  through `LLM_EXTRA_ARGS`, it will fail to start on this version; change the model or options first.
 
 [0.2.1]
 
