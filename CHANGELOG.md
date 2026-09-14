@@ -1,3 +1,15 @@
+[0.2.2]
+
+- Update vLLM 0.28.0 to 0.29.0
+- Model Runner V2 is now the default engine; new model support includes Hy4-preview, Qwen3.8-Flash-Next, GraniteSWA/MoE and Kimi K3 NVFP4
+- Performance improvements across CUDA ROCm and CPU backends
+- New opt-in ASGI authentication middleware (available via `--api-key`)
+- Ten deprecated model architectures removed: Arctic, Chameleon, Cheers, Fairseq2Llama, FireRedLID, GritLM, HCXVision, MPT, RWForCausalLM/StableLMEpochForCausalLM aliases and PrithviGeoSpatialMAE
+- PyAV video decoder backend removed; use OpenCV or Torchcodec instead
+- Environment variables `VLLM_TEST_FORCE_FP8_MARLIN` and `VLLM_ROCM_USE_AITER_FP4_ASM_GEMM` removed
+- FlashInfer all-reduce now enabled by default for TP CUDA groups (opt out with `VLLM_ALLREDUCE_USE_FLASHINFER=0`)
+- Packaging: no changes required; existing deployments will see no required action on update
+
 [0.2.1]
 
 - Update vLLM 0.27.1 -> 0.28.0
