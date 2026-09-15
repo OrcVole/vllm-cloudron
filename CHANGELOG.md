@@ -1,4 +1,4 @@
-[0.2.2]
+[0.3.0]
 
 - Update vLLM 0.28.0 to 0.29.0
 - Model Runner V2 is now the default engine; new model support includes Hy4-preview, Qwen3.8-Flash-Next, GraniteSWA/MoE and Kimi K3 NVFP4
