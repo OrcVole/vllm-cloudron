@@ -1,3 +1,11 @@
+[0.3.1]
+
+- Update vLLM 0.29.0 to 0.30.0
+- New models: DeepSeek-V4.1-Flash, GLM-5.3-Flash, K2-Horizon; Fast Start weight-cache daemon
+- Watermarking support and HiSparse tiering improvements
+- Scale-out endpoints now opt-in via `--enable-scale-out` flag (env var removed upstream)
+- Packaging: no changes required for this Cloudron package
+
 [0.3.0]
 
 - Update vLLM 0.28.0 to 0.29.0

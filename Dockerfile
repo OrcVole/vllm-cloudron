@@ -7,7 +7,7 @@
 # the multi-gigabyte CUDA torch (field guide gotcha #2). A future GPU variant swaps the +cpu
 # wheel for the +cu129 wheel published in the same upstream release (ADR 0001).
 
-ARG VLLM_VERSION=0.29.0
+ARG VLLM_VERSION=0.30.0
 
 # --- Stage 1: builder ----------------------------------------------------------------------
 FROM cloudron/base:5.0.0@sha256:04fd70dbd8ad6149c19de39e35718e024417c3e01dc9c6637eaf4a41ec4e596c AS builder
@@ -27,7 +27,7 @@ RUN ${VENV}/bin/uv pip install --python ${VENV}/bin/python \
 # pip, not uv, for this step: uv's first-index strategy cannot satisfy the wheel's exact
 # setuptools pin against the PyTorch CPU extra index (observed 2026-07-30, v0.26.0).
 RUN ${VENV}/bin/pip install --no-cache-dir \
-      "https://github.com/vllm-project/vllm/releases/download/v${VLLM_VERSION}/vllm-${VLLM_VERSION}+cpu-cp38-abi3-manylinux_2_34_x86_64.whl" \
+      "https://github.com/vllm-project/vllm/releases/download/v${VLLM_VERSION}/vllm-${VLLM_VERSION}+cpu-cp38-abi3-manylinux_2_39_x86_64.whl" \
       --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Intel OpenMP: the upstream CPU docs recommend LD_PRELOADing libiomp5.so with the prebuilt
