@@ -48,5 +48,5 @@
   "manifestVersion": 2,
   "minBoxVersion": "9.1.0",
   "iconUrl": "https://raw.githubusercontent.com/OrcVole/vllm-cloudron/main/logo.png",
-  "dockerImage": "ghcr.io/orcvole/vllm-cloudron@sha256:a3261dba79b89e11197ad3296b51c9af72bd5fb0f4eece339e6f6483b051d980"
+  "dockerImage": "ghcr.io/orcvole/vllm-cloudron@sha256:211adeaa520cc6e9278f59f4119b16100ebeffd9a82bffacd16ea7384675e339"
 }

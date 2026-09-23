@@ -10,7 +10,7 @@
 ARG VLLM_VERSION=0.30.0
 
 # --- Stage 1: builder ----------------------------------------------------------------------
-FROM cloudron/base:5.0.0@sha256:04fd70dbd8ad6149c19de39e35718e024417c3e01dc9c6637eaf4a41ec4e596c AS builder
+FROM cloudron/base:5.1.0@sha256:1c0666c9abe9e2090d33686826d4e97769b799124573118d41e0d7485135748e AS builder
 ARG VLLM_VERSION
 
 RUN apt-get update && apt-get install -y --no-install-recommends python3.12-venv \
@@ -45,7 +45,7 @@ print("build gate ok:", vllm.__version__, torch.__version__)
 PY
 
 # --- Stage 2: runtime ----------------------------------------------------------------------
-FROM cloudron/base:5.0.0@sha256:04fd70dbd8ad6149c19de39e35718e024417c3e01dc9c6637eaf4a41ec4e596c
+FROM cloudron/base:5.1.0@sha256:1c0666c9abe9e2090d33686826d4e97769b799124573118d41e0d7485135748e
 ARG VLLM_VERSION
 # Not named VLLM_VERSION at runtime: vLLM treats VLLM_* as its own env namespace and warns
 # about unknown members on every boot.

@@ -5,6 +5,8 @@
 - Watermarking support and HiSparse tiering improvements
 - Scale-out endpoints now opt-in via `--enable-scale-out` flag (env var removed upstream)
 - Packaging: no changes required for this Cloudron package
+- Base image cloudron/base 5.0.0 to 5.1.0: the Ubuntu 24.04.4 point release, with its OS security
+  updates. Same Ubuntu 24.04 release and glibc 2.39.
 
 [0.3.0]
 
