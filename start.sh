@@ -22,6 +22,8 @@ MODELS_DIR="/var/lib/vllm"
 HF_DIR="${MODELS_DIR}/hf"          # HF_HOME: hub cache, token state, downloaded weights
 VLLM_CACHE="${MODELS_DIR}/cache"   # VLLM_CACHE_ROOT: compiled-artifact cache
 CACHE_DIR="${DATA}/cache"          # XDG cache (small, backed up)
+RUN_HOME="${MODELS_DIR}/home"      # HOME: /home/cloudron is read-only on Cloudron
+TRITON_DIR="${VLLM_CACHE}/triton"  # TRITON_CACHE_DIR: JIT kernels, regenerable, not backed up
 
 # nginx owns the manifest httpPort and answers /health immediately; vLLM binds its own port
 # only after model load (upstream behaviour), which would otherwise restart-loop first boot.
@@ -43,7 +45,7 @@ echo "==> [start] vllm ${UPSTREAM_VERSION:-unknown} (cpu) booting"
 # 1. Ownership and layout on EVERY boot: a restore drifts ownership and modes, and the
 #    persistentDirs mount arrives root-owned.
 echo "==> [start] preparing ${DATA} and ${MODELS_DIR} (secrets, model cache, xdg cache)"
-mkdir -p "${SECRETS_DIR}" "${HF_DIR}" "${VLLM_CACHE}" "${CACHE_DIR}"
+mkdir -p "${SECRETS_DIR}" "${HF_DIR}" "${VLLM_CACHE}" "${CACHE_DIR}" "${RUN_HOME}" "${TRITON_DIR}"
 chown -R cloudron:cloudron "${DATA}" "${MODELS_DIR}"
 chmod 0700 "${SECRETS_DIR}"
 
@@ -89,6 +91,11 @@ export VLLM_API_KEY
 export HF_HOME="${HF_DIR}"
 export VLLM_CACHE_ROOT="${VLLM_CACHE}"
 export XDG_CACHE_HOME="${CACHE_DIR}"
+# vLLM 0.31 compiles Triton kernels on first boot and writes them to $HOME/.triton by default, which
+# crash-looped the engine on Cloudron's read-only home (Batch 7 gate 3, 2026-10-16). Both are pointed
+# at the persistent, non-backed-up directory beside vLLM's own cache, so the kernels survive restarts.
+export HOME="${RUN_HOME}"
+export TRITON_CACHE_DIR="${TRITON_DIR}"
 export HF_HUB_DISABLE_TELEMETRY=1
 export DO_NOT_TRACK=1
 export VLLM_NO_USAGE_STATS=1

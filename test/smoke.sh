@@ -8,6 +8,7 @@
 # scarce resource and retry storms are the documented failure mode.
 #
 # Usage: test/smoke.sh [IMAGE]   (default: vllm-cloudron:dev)
+# SMOKE_KVCACHE_GIB=1 when the host is short of strictly free memory (vLLM counts MemFree, not page cache).
 # A persistent data volume keeps the model cache across runs so re-tests do not re-download.
 
 set -euo pipefail
@@ -27,8 +28,12 @@ $CRI volume create "$VOL" >/dev/null 2>&1 || true
 $CRI volume create "${VOL}-models" >/dev/null 2>&1 || true
 
 echo "==> starting $IMAGE as $NAME on :$PORT"
+# Read-only root, writable /tmp and /run: what Cloudron gives an app. Without --read-only this smoke
+# passed an image whose engine crash-looped on the box (vLLM 0.31 writing to $HOME/.triton, Batch 7).
 $CRI run -d --name "$NAME" -p "127.0.0.1:${PORT}:8000" -v "$VOL":/app/data \
-  -v "${VOL}-models":/var/lib/vllm --memory 8g "$IMAGE" >/dev/null
+  -v "${VOL}-models":/var/lib/vllm --read-only --tmpfs /tmp:rw,size=1g --tmpfs /run:rw,size=256m \
+  -e VLLM_CPU_KVCACHE_SPACE="${SMOKE_KVCACHE_GIB:-4}" \
+  --memory 8g "$IMAGE" >/dev/null
 
 # 1. Liveness must answer 200 well before the model is ready (ADR 0003). Give nginx 15s to
 #    come up, then require /health while /ready is still failing or just-ready.

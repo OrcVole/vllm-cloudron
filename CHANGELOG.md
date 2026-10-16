@@ -1,3 +1,23 @@
+[0.4.0]
+
+- Base image cloudron/base 5.1.0 to 6.0.0 (Ubuntu 26.04). Base 6 carries Python 3.14 and no venv,
+  so the package now ships its own CPython 3.12.15, installed by uv under /app/code/python. Same
+  Python minor as before; no future base bump can move it.
+- Update vLLM 0.30.0 to 0.31.0. A minor, not a patch, because upstream lists breaking changes:
+  - Per-request `mm_processor_kwargs` and `media_io_kwargs` are now refused unless the server is
+    started with `--trust-request-mm-kwargs` (add it to `LLM_EXTRA_ARGS` only if you trust every
+    caller).
+  - `tokenizer_mode="slow"` is removed.
+  - `--enable-mamba-fine-grained-prefix-cache` is renamed `--enable-mamba-shared-prefix-checkpoint`.
+- Security (upstream's own Security section): per-request multimodal kwargs gated (#58830); prefix
+  cache keys tagged by source and LoRA paths hashed, so one tenant cannot collide another's cached
+  blocks (#51899, #59335); a stale receiver cache no longer overrides fresh multimodal input (#57833);
+  upper-case memory addresses filtered from messages (#58832); LoRA adapters named after a served
+  model refused (#59286).
+- Fix: vLLM 0.31 writes compiled Triton kernels to the home directory, which is read-only on Cloudron,
+  so the engine crash-looped on first boot while the dashboard still showed the app as running. The
+  kernel cache now lives beside the model cache in /var/lib/vllm (kept across restarts, not backed up).
+
 [0.3.1]
 
 - Update vLLM 0.29.0 to 0.30.0
