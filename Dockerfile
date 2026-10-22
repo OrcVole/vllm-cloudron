@@ -7,7 +7,7 @@
 # the multi-gigabyte CUDA torch (field guide gotcha #2). A future GPU variant swaps the +cpu
 # wheel for the +cu129 wheel published in the same upstream release (ADR 0001).
 
-ARG VLLM_VERSION=0.31.0
+ARG VLLM_VERSION=0.32.0
 
 # --- uv, pinned: it installs the interpreter as well as the packages ------------------------
 FROM ghcr.io/astral-sh/uv:0.13.1@sha256:4a1f3666816dafadd20ceb71eac9a7d56d7ef30279f7d64048519ab901ada336 AS uv
@@ -17,7 +17,7 @@ FROM ghcr.io/astral-sh/uv:0.13.1@sha256:4a1f3666816dafadd20ceb71eac9a7d56d7ef302
 # with uv under /app/code/python (base-6-migration.md step 5: preferred for torch and vLLM, whose
 # wheels lag new Python releases), so the interpreter travels with the venv and no future base
 # bump can move it. The venv's python is a symlink into that tree, so both are copied below.
-FROM docker.io/cloudron/base:6.0.0@sha256:9bed4c8fa880645f8e669041ee28febe941481d00e9445e3e5a5483cb541d09b AS builder
+FROM docker.io/cloudron/base:6.0.1@sha256:7b1e729960c3ca312d26e886917ba89483241bba0219ff292858e10d9d5768ee AS builder
 ARG VLLM_VERSION
 COPY --from=uv /uv /usr/local/bin/uv
 ENV VENV=/app/code/venv \
@@ -53,7 +53,7 @@ print("build gate ok:", vllm.__version__, torch.__version__)
 PY
 
 # --- Stage 2: runtime ----------------------------------------------------------------------
-FROM docker.io/cloudron/base:6.0.0@sha256:9bed4c8fa880645f8e669041ee28febe941481d00e9445e3e5a5483cb541d09b
+FROM docker.io/cloudron/base:6.0.1@sha256:7b1e729960c3ca312d26e886917ba89483241bba0219ff292858e10d9d5768ee
 ARG VLLM_VERSION
 # Not named VLLM_VERSION at runtime: vLLM treats VLLM_* as its own env namespace and warns
 # about unknown members on every boot.

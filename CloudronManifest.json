@@ -6,8 +6,8 @@
   "description": "file://DESCRIPTION.md",
   "changelog": "file://CHANGELOG.md",
   "icon": "file://logo.png",
-  "version": "0.4.0",
-  "upstreamVersion": "0.31.0",
+  "version": "0.4.1",
+  "upstreamVersion": "0.32.0",
   "healthCheckPath": "/health",
   "httpPort": 8000,
   "addons": {
@@ -48,5 +48,5 @@
   "manifestVersion": 2,
   "minBoxVersion": "9.1.0",
   "iconUrl": "https://raw.githubusercontent.com/OrcVole/vllm-cloudron/main/logo.png",
-  "dockerImage": "ghcr.io/orcvole/vllm-cloudron@sha256:4b9c5a7193e3d89ef73e50c17bcdca21c6995f9678911e8c2af3213ae4581498"
+  "dockerImage": "ghcr.io/orcvole/vllm-cloudron@sha256:bcf707b057fe271e33066a718d48ce9cf8810d4e674822aad0ee3995295adaf6"
 }

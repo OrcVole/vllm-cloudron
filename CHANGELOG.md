@@ -1,3 +1,22 @@
+[0.4.1]
+
+- Base image cloudron/base 6.0.0 to 6.0.1: Ubuntu security updates, including the removal of the compromised eMudhra emSign ECC Root CA - G3 from the trusted certificates.
+- Update vLLM 0.31.0 to 0.32.0. Breaking changes from upstream's notes:
+  - **Default CORS origins are now none** (they were every origin). A browser page on another origin
+    can no longer call the API unless the server is started with `--allowed-origins` (add it to
+    `LLM_EXTRA_ARGS`). Same-origin pages, including this package's landing page, and non-browser clients
+    are unaffected.
+  - `transformers>=5.16.1,<5.20.0` and `tokenizers>=0.23.2` are required (the image ships transformers
+    5.19.0 and tokenizers 0.23.3). Python 3.10 support is dropped; this package ships its own CPython 3.12.15.
+  - Removed: cascade attention (`--disable-cascade-attn` now only warns), `--mamba-cache-mode all`, the
+    torch.compile sequence parallelism and AsyncTP passes. `max_tokens` is now an upper bound on output
+    rather than reserved from the context window.
+- Security (upstream's own Security section): fixes for GHSA-4hhp-h66f-j5j7 (chat template resource
+  exhaustion, #50300), GHSA-q97c-p368-75c4 (tokenizer `max_token_id`, #59491) and GHSA-frvg-qw88-hww9
+  (P2P ZMQ socket exhaustion, #51504); CORS no longer allows every origin by default (#61009); dependency
+  bumps including `aiohttp>=3.14.3` and `pillow>=12.3.0`.
+- Fix: the store description showed the upstream version as 0.30.0; it now follows the manifest.
+
 [0.4.0]
 
 - Base image cloudron/base 5.1.0 to 6.0.0 (Ubuntu 26.04). Base 6 carries Python 3.14 and no venv,
